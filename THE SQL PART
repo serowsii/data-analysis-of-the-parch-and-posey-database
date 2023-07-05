@@ -1,3 +1,45 @@
 Being a beginner means your favorite person would be a search engine in our case (google). you get to see how different people tackled the parch and posey database.
 This way we had an insight of it being a business and giving it a business analytics approach.
 I may not be able to share all the queries but I will share a few just give an insight on how we achieved the visualization part.
+
+
+1. the channel that brought the highest number of customers
+
+Ans Direct is the channel that brought the highest number of sales
+
+
+SELECT COUNT(W.channel) AS countchannel, W.channel AS channel, A.name      
+FROM accounts AS A
+JOIN web_events AS W ON W.account_id = account_id
+WHERE W.channel IN ('adwords', 'facebook', 'twitter', 'banner', 'direct', 'organic')
+GROUP BY W.channel, A.name
+ORDER BY countchannel DESC
+LIMIT 6;
+
+2.Total number of papers ordered according to region
+
+SELECT region_id,
+       COUNT(standard_qty) AS count_standard_qty,
+       COUNT(gloss_qty) AS count_gloss_qty,
+       COUNT(poster_qty) AS count_poster_qty
+FROM orders
+JOIN accounts ON orders.account_id = accounts.id
+JOIN sales_reps ON sales_reps.id = accounts.sales_rep_id
+GROUP BY region_id
+ORDER BY region_id;
+
+3.This query shows the region with  the highest sales in 2016 stating the sales reps and their names
+
+
+SELECT date_part('year',occurred_at), accounts.sales_rep_id, accounts.sales_rep_id, accounts.name, sales_reps.name, region.name, total, total_amt_usd
+FROM orders
+LEFT JOIN accounts
+ON orders.account_id=accounts.id
+JOIN sales_reps
+ON sales_reps.id=accounts.sales_rep_id
+JOIN region
+ON region.id=sales_reps.region_id
+WHERE date_part('year',occurred_at)=2016
+AND total_amt_usd >0
+ORDER BY total_amt_usd desc
+LIMIT 1;
